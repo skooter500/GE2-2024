@@ -16,7 +16,6 @@ func draw_gizmos():
 	DebugDraw3D.draw_sphere(target.global_position, slowing_distance, Color.BLUE_VIOLET)
 
 var target:Node3D
-
 func _ready():
 	target = get_node(target_node_path)	
 	
