@@ -17,7 +17,7 @@ ambient_light_color = Color(0.607843, 0.607843, 0.607843, 1)
 
 [sub_resource type="Curve3D" id="Curve3D_8svmc"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, -5, 0, 5, 0, 0, 0, 0, 0, 0, -5, 0, -5, 0, 0, 0, 0, 0, 0, 5, 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+"points": PackedVector3Array(0.191954, 0.109166, -0.896236, -0.192, 0, 0.896, 0, 0, 0, 0.368939, 0.149729, -1.07487, -0.368939, -0.149729, 1.07487, 5, 0, 5, 1.01386, 0.259827, 1.31766, -1.01386, -0.259827, -1.31766, -5, 2, 5, -1.59865, 0.207891, 0.559632, 1.59865, -0.207891, -0.559632, -5, -2, -5, 0.186701, -0.727522, -1.66054, -0.186701, 0.727522, 1.66054, 5, 0, -5, 0.248, 0, -1.29, -0.248406, -0.315639, 1.29038, 0, 0, 0),
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0)
 }
 point_count = 6
@@ -25,7 +25,7 @@ point_count = 6
 [node name="root" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.901259, 5.50954e-09, -0.433282, 0.400488, -0.381635, 0.833045, -0.165355, -0.924313, -0.343952, -7.45868, 20.177, -11.3659)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
 near = 0.01
 
 [node name="boid" type="CharacterBody3D" parent="." node_paths=PackedStringArray("path")]
@@ -34,7 +34,7 @@ target_node_path = NodePath("../Path3D/PathFollow3D/Move here marker")
 path = NodePath("../Path3D/PathFollow3D")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="boid"]
-transform = Transform3D(1, 0, 0, 0, -8.74228e-08, -1, 0, 2, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(0.25, 0, 0, 0, -2.18557e-08, -0.25, 0, 0.5, -1.09278e-08, 0, 0, 0)
 mesh = SubResource("PrismMesh_6q73x")
 skeleton = NodePath("../..")
 surface_material_override/0 = ExtResource("2_6po8y")
@@ -58,16 +58,18 @@ environment = SubResource("Environment_mhj6t")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 5.0
+autostart = true
 
 [node name="Path3D" type="Path3D" parent="."]
 curve = SubResource("Curve3D_8svmc")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
-transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 0, 0, 0)
+transform = Transform3D(-0.977803, 0, 0.209529, 0, 1, 0, -0.209529, 0, -0.977803, 0, 0, 0)
 
 [node name="Move here marker" type="Marker3D" parent="Path3D/PathFollow3D"]
 
 [node name="CSGSphere3D" type="CSGSphere3D" parent="Path3D/PathFollow3D/Move here marker"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 material = SubResource("StandardMaterial3D_jyhd8")
 
 [connection signal="timeout" from="Timer" to="Move here marker" method="_on_timer_timeout"]

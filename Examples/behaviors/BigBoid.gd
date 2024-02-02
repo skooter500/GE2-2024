@@ -6,15 +6,19 @@ extends CharacterBody3D
 @export var target_node_path:NodePath
 @export var path:PathFollow3D
 @export var mass:float = 1
-@export var slowing_distance:float = 3
+@export var slowing_distance:float = 1
 @export var target_speed:float = 0.05
+@export var acceleration_scale:float = 1
 var target:Node3D
 
 
-#for banking, we need to calculate an 'effective down' using restitution of force
+#for banking, we need to calculate an 'effective up' using restitution of force
 @export var grav_direction:Vector3 = Vector3(0,-1,0)
-@export var grav_scale:float = 3
-@export var effective_down:Vector3
+@export var grav_scale:float = 2
+@export var effective_up:Vector3
+var display_bank_force:Vector3
+var display_look_dir:Vector3
+@export var look_dir:Vector3
 
 func draw_gizmos():
 	#Red, force
@@ -22,9 +26,11 @@ func draw_gizmos():
 	#Yellow, velocity
 	DebugDraw3D.draw_arrow(global_position, global_position + velocity, Color.YELLOW, 0.1)
 	#Blue Violet (purps), arrive sphere
-	DebugDraw3D.draw_sphere(target.global_position, slowing_distance, Color.BLUE_VIOLET)
+	DebugDraw3D.draw_sphere(target.global_position, slowing_distance, Color.CADET_BLUE)
 	#green, effective down
-	DebugDraw3D.draw_arrow(global_position, global_position + effective_down, Color.GREEN, 0.1)
+	DebugDraw3D.draw_arrow(global_position, global_position + display_bank_force, Color.GREEN, 0.1)
+	#orange look dir
+	DebugDraw3D.draw_arrow(global_position, global_position + display_look_dir, Color.ORANGE, 0.1)
 
 func _ready():
 	target = get_node(target_node_path)	
@@ -47,17 +53,26 @@ func seek(target_pos:Vector3):
 func bank(turn_force:Vector3):
 	var restitution = -grav_direction * grav_scale # typical "up"
 	var derived_up = restitution + turn_force
-	effective_down = -derived_up
-	return derived_up
+	display_bank_force = derived_up
+	return derived_up.normalized()
+
+func derived_look(up:Vector3, vel:Vector3):
+	var right = vel.cross(up)
+	var forward = up.cross(right)
+	display_look_dir = forward
+	return forward
 
 func _physics_process(delta):
 	path.progress+=target_speed
 	force = arrive(target.global_position, slowing_distance)
 	acceleration = force / mass
 	
-	velocity = velocity + acceleration * delta
+	velocity = velocity + acceleration * delta * acceleration_scale
+	
+	effective_up = bank(force)
+	look_dir = derived_look(effective_up, velocity)
 	if velocity.length() > 0:
-		look_at(position - velocity, bank(force))
+		look_at(global_position - look_dir, effective_up)
 		# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
 	
