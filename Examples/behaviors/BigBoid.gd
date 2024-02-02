@@ -44,9 +44,15 @@ func seek(target_pos:Vector3):
 	var desired = to_target.normalized() * max_speed
 	return desired - velocity
 	
+<<<<<<< Updated upstream
 func bank(vel:Vector3, turn_force:Vector3):
 	var restitution = -grav_direction * grav_scale # typical "up"
 	var derived_up = restitution + force
+=======
+func bank(turn_force:Vector3):
+	var restitution = -grav_direction * grav_scale # typical "up"
+	var derived_up = restitution + turn_force
+>>>>>>> Stashed changes
 	effective_down = -derived_up
 	return derived_up
 
@@ -57,7 +63,11 @@ func _physics_process(delta):
 	
 	velocity = velocity + acceleration * delta
 	if velocity.length() > 0:
+<<<<<<< Updated upstream
 		look_at(position - velocity, bank(velocity, force))
+=======
+		look_at(position - velocity, bank(force))
+>>>>>>> Stashed changes
 		# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
 	
