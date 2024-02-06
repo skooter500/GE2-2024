@@ -16,7 +16,7 @@ extends CharacterBody3D
 @export var player_enabled:bool=false
 
 func draw_gizmos():
-	DebugDraw3D.draw_arrow(global_position, global_position + force * 20, Color.RED, 0.1)
+	DebugDraw3D.draw_arrow(global_position, global_position + force, Color.RED, 0.1)
 	DebugDraw3D.draw_arrow(global_position, global_position + velocity, Color.YELLOW, 0.1)
 
 	DebugDraw3D.draw_sphere(target.global_position, slowing_distance, Color.BLUE_VIOLET)
@@ -39,8 +39,23 @@ func seek(target_pos:Vector3):
 	var desired = to_target.normalized() * max_speed
 	return desired - velocity
 	
+@export var power:float = 100
+	
 func player():
-	return Vector3.ZERO
+	var force = Vector3.ZERO
+	var f = Input.get_axis("back", "forward")
+	
+	force = f * power * global_basis.z
+	
+	var s = Input.get_axis("left", "right")
+	
+	var projected = global_basis.x
+	projected.y = 0
+	projected = projected.normalized()
+	
+	force += s * power * projected
+	
+	return force
 	pass	
 func calculate():
 	var force = Vector3.ZERO
