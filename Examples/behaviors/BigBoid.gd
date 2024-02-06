@@ -11,6 +11,10 @@ extends CharacterBody3D
 @export var damping:float = 0.1
 @export var banking:float = 0.1
 
+@export var seek_enabled:bool=true
+@export var arrive_enabled:bool=false
+@export var player_enabled:bool=false
+
 func draw_gizmos():
 	DebugDraw3D.draw_arrow(global_position, global_position + force * 20, Color.RED, 0.1)
 	DebugDraw3D.draw_arrow(global_position, global_position + velocity, Color.YELLOW, 0.1)
@@ -35,8 +39,23 @@ func seek(target_pos:Vector3):
 	var desired = to_target.normalized() * max_speed
 	return desired - velocity
 	
+func player():
+	return Vector3.ZERO
+	pass	
+func calculate():
+	var force = Vector3.ZERO
+	
+	if seek_enabled:
+		force += seek(target.global_position)
+	if arrive_enabled:
+		force += arrive(target.global_position, slowing_distance)
+	if player_enabled:
+		force += player()
+	return force
+	
 func _physics_process(delta):
-	force = arrive(target.global_position, slowing_distance)
+	
+	force = calculate()
 	acceleration = force / mass
 	
 	velocity = velocity + acceleration * delta
@@ -50,7 +69,6 @@ func _physics_process(delta):
 		var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), delta * 5.0)
 		look_at(global_transform.origin - velocity.normalized(), temp_up)
 	
-
 	move_and_slide()
 	draw_gizmos()
 	

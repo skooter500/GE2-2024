@@ -23,6 +23,8 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -9.203
 [node name="boid" type="CharacterBody3D" parent="."]
 script = ExtResource("1_v3sjo")
 target_node_path = NodePath("../Marker3D")
+seek_enabled = false
+player_enabled = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="boid"]
 transform = Transform3D(1, 0, 0, 0, -8.74228e-08, -1, 0, 2, -4.37114e-08, 0, 0, 0)
