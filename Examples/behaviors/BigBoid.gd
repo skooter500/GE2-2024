@@ -14,7 +14,7 @@ var target:Node3D
 
 #for banking, we need to calculate an 'effective up' using restitution of force
 @export var grav_direction:Vector3 = Vector3(0,-1,0)
-@export var grav_scale:float = 5
+@export var grav_scale:float = 3
 @export var effective_up:Vector3
 var display_bank_force:Vector3
 var display_look_dir:Vector3
