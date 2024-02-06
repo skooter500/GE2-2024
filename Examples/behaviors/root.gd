@@ -2,6 +2,7 @@ extends Node3D
 
 var xr_interface: XRInterface
 
+	
 
 func _input(event):
 	if event is InputEventKey and event.keycode == KEY_Q:

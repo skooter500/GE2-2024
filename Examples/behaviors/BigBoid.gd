@@ -14,6 +14,20 @@ extends CharacterBody3D
 @export var seek_enabled:bool=true
 @export var arrive_enabled:bool=false
 @export var player_enabled:bool=false
+@export var follow_path:bool=false
+
+@onready var path:Path3D=get_node("../Path3D")
+
+var current:int = 0 
+
+func follow():
+	var target = (path.get_curve().get_point_position(current))
+	
+	var to_target = target - global_position
+	var dist = to_target.length()
+	if dist < 2:
+		current = (current + 1) % path.get_curve().get_point_count()
+	return seek(target)
 
 func draw_gizmos():
 	DebugDraw3D.draw_arrow(global_position, global_position + force, Color.RED, 0.1)
@@ -66,6 +80,8 @@ func calculate():
 		force += arrive(target.global_position, slowing_distance)
 	if player_enabled:
 		force += player()
+	if follow_path:
+		force += follow()
 	return force
 	
 func _physics_process(delta):
