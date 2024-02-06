@@ -1,80 +1,46 @@
-[gd_scene load_steps=13 format=3 uid="uid://doxnhvhjq4su4"]
+[gd_scene load_steps=8 format=3 uid="uid://doxnhvhjq4su4"]
 
-[ext_resource type="Script" path="res://behaviors/root.gd" id="1_5x1jo"]
+[ext_resource type="Script" path="res://behaviors/root.gd" id="1_tugak"]
 [ext_resource type="Script" path="res://behaviors/BigBoid.gd" id="1_v3sjo"]
-[ext_resource type="Material" uid="uid://riaxsucfeykv" path="res://behaviors/boid_material.tres" id="2_6po8y"]
+[ext_resource type="Material" uid="uid://w1qh7uc0q4l6" path="res://behaviors/boid_material.tres" id="2_6po8y"]
 [ext_resource type="Script" path="res://behaviors/MoveMe.gd" id="3_fk53t"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_6q73x"]
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_my05m"]
-emission_shape_offset = Vector3(0, -0.5, 0)
-emission_shape_scale = Vector3(0, 0, 0)
-direction = Vector3(0, 0, 0)
-spread = 0.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hovgs"]
-albedo_color = Color(1, 0.113725, 1, 1)
-use_particle_trails = true
-
-[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_6hgjr"]
-material = SubResource("StandardMaterial3D_hovgs")
-shape = 0
-size = 0.2
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_752ur"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyhd8"]
 
 [sub_resource type="Environment" id="Environment_mhj6t"]
 background_mode = 1
 ambient_light_source = 2
 ambient_light_color = Color(0.607843, 0.607843, 0.607843, 1)
 
-[sub_resource type="Curve3D" id="Curve3D_8svmc"]
-_data = {
-"points": PackedVector3Array(0.191954, 0.109166, -0.896236, -0.192, 0, 0.896, 0, 0, 0, 0.368939, 0.149729, -1.07487, -0.368939, -0.149729, 1.07487, 5, 0, 5, 1.01386, 0.259827, 1.31766, -1.01386, -0.259827, -1.31766, -5, 2, 5, -1.59865, 0.207891, 0.559632, 1.59865, -0.207891, -0.559632, -5, -2, -5, 0.186701, -0.727522, -1.66054, -0.186701, 0.727522, 1.66054, 5, 0, -5, 0.248, 0, -1.29, -0.248406, -0.315639, 1.29038, 0, 0, 0),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0)
-}
-point_count = 6
-
 [node name="root" type="Node3D"]
-script = ExtResource("1_5x1jo")
+script = ExtResource("1_tugak")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
-near = 0.01
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -9.2033, 20.1768, 6.13743)
 
-[node name="boid" type="CharacterBody3D" parent="." node_paths=PackedStringArray("path")]
+[node name="boid" type="CharacterBody3D" parent="."]
 script = ExtResource("1_v3sjo")
-target_node_path = NodePath("../Path3D/PathFollow3D/Move here marker")
-path = NodePath("../Path3D/PathFollow3D")
+target_node_path = NodePath("../Marker3D")
+seek_enabled = false
+player_enabled = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="boid"]
-transform = Transform3D(0.5, 0, 0, 0, -4.37114e-08, -0.5, 0, 1, -2.18557e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -8.74228e-08, -1, 0, 2, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("PrismMesh_6q73x")
 skeleton = NodePath("../..")
 surface_material_override/0 = ExtResource("2_6po8y")
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="boid/MeshInstance3D"]
-visible = false
-sub_emitter = NodePath(".")
-speed_scale = 10.0
-trail_enabled = true
-trail_lifetime = 1.91
-process_material = SubResource("ParticleProcessMaterial_my05m")
-draw_pass_1 = SubResource("RibbonTrailMesh_6hgjr")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="boid"]
 shape = SubResource("BoxShape3D_752ur")
 
-[node name="Move here marker" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.0716, 0.0151713, 4.19095)
-visible = false
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.06085, 0, 4.15806)
 script = ExtResource("3_fk53t")
 
-[node name="CSGSphere3D" type="CSGSphere3D" parent="Move here marker"]
-material = SubResource("StandardMaterial3D_jyhd8")
+[node name="CSGSphere3D" type="CSGSphere3D" parent="Marker3D"]
+material = ExtResource("2_6po8y")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.580348, -0.712167, 0.394988, 0, 0.485023, 0.874501, -0.814369, -0.507515, 0.281482, 0, 4.35052, 0)
@@ -83,19 +49,7 @@ transform = Transform3D(0.580348, -0.712167, 0.394988, 0, 0.485023, 0.874501, -0
 environment = SubResource("Environment_mhj6t")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 2.0
 autostart = true
 
-[node name="Path3D" type="Path3D" parent="."]
-curve = SubResource("Curve3D_8svmc")
-
-[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
-transform = Transform3D(-0.977803, 0, 0.209529, 0, 1, 0, -0.209529, 0, -0.977803, 0, 0, 0)
-
-[node name="Move here marker" type="Marker3D" parent="Path3D/PathFollow3D"]
-
-[node name="CSGSphere3D" type="CSGSphere3D" parent="Path3D/PathFollow3D/Move here marker"]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
-material = SubResource("StandardMaterial3D_jyhd8")
-
-[connection signal="timeout" from="Timer" to="Move here marker" method="_on_timer_timeout"]
+[connection signal="timeout" from="Timer" to="Marker3D" method="_on_timer_timeout"]

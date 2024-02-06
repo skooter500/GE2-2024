@@ -11,6 +11,12 @@ extends CharacterBody3D
 @export var acceleration_scale:float = 1
 var target:Node3D
 
+@export var damping:float = 0.1
+@export var banking:float = 0.1
+
+@export var seek_enabled:bool=true
+@export var arrive_enabled:bool=false
+@export var player_enabled:bool=false
 
 #for banking, we need to calculate an 'effective up' using restitution of force
 @export var grav_direction:Vector3 = Vector3(0,-1,0)
@@ -67,9 +73,25 @@ func derived_look(up:Vector3, vel:Vector3):
 	display_look_dir = forward
 	return forward
 
+func player():
+	return Vector3.ZERO
+	pass	
+func calculate():
+	var force = Vector3.ZERO
+	
+	if seek_enabled:
+		force += seek(target.global_position)
+	if arrive_enabled:
+		force += arrive(target.global_position, slowing_distance)
+	if player_enabled:
+		force += player()
+	return force
+
 func _physics_process(delta):
 	path.progress+=target_speed
 	force = arrive(target.global_position, slowing_distance)
+	
+	force = calculate()
 	acceleration = force / mass
 	
 	velocity = velocity + acceleration * delta * acceleration_scale
@@ -77,10 +99,15 @@ func _physics_process(delta):
 	effective_up = bank(force)
 	look_dir = derived_look(effective_up, velocity)
 	if velocity.length() > 0:
-		look_at(global_position - look_dir, effective_up)
-		# global_transform.basis.z  = velocity.normalized()
+		#look_at(global_position - look_dir, effective_up)
+		# look_at(position - velocity)
+		# apply damping
+		velocity -= velocity * delta * damping
+					# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
-		velocity -= velocity * damping * delta
+
+		var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), delta * 5.0)
+		look_at(global_transform.origin - velocity.normalized(), temp_up)
 	
 	move_and_slide()
 	draw_gizmos()
