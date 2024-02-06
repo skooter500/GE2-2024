@@ -8,6 +8,8 @@ extends CharacterBody3D
 @export var mass:float = 1
 @export var slowing_distance = 5
 
+@export var damping:float = 0.1
+@export var banking:float = 0.1
 
 func draw_gizmos():
 	DebugDraw3D.draw_arrow(global_position, global_position + force * 20, Color.RED, 0.1)
@@ -22,8 +24,8 @@ func _ready():
 func arrive(target_pos:Vector3, slowing:float):
 	var to_target = target_pos - global_position
 	var dist = to_target.length()
-	var ramped = dist / slowing
-	var clamped = min(ramped, slowing)
+	var ramped = (dist / slowing) * max_speed
+	var clamped = min(ramped, max_speed) 
 	var desired = (to_target * clamped) / dist
 	return desired - velocity
 	
@@ -39,10 +41,16 @@ func _physics_process(delta):
 	
 	velocity = velocity + acceleration * delta
 	if velocity.length() > 0:
-		look_at(position - velocity)
-		# global_transform.basis.z  = velocity.normalized()
+		# look_at(position - velocity)
+		# apply damping
+		velocity -= velocity * delta * damping
+					# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
+
+		var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), delta * 5.0)
+		look_at(global_transform.origin - velocity.normalized(), temp_up)
 	
+
 	move_and_slide()
 	draw_gizmos()
 	
