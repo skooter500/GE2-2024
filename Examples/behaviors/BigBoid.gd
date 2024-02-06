@@ -20,6 +20,8 @@ var display_bank_force:Vector3
 var display_look_dir:Vector3
 @export var look_dir:Vector3
 
+var damping:float = 0.1
+
 func draw_gizmos():
 	#Red, force
 	DebugDraw3D.draw_arrow(global_position, global_position + force, Color.RED, 0.1)
@@ -39,9 +41,12 @@ func _ready():
 	
 func arrive(target_pos:Vector3, slowing:float): 
 	var distance = target_pos - global_position
-	var ramped_speed = max_speed*(distance.length()/slowing)
+	
+	var length = distance.length() #calcing length once rather than twice
+	
+	var ramped_speed = max_speed*(length/slowing)
 	var clipped_speed = min(ramped_speed, max_speed)
-	var desired = clipped_speed * distance.normalized()
+	var desired = clipped_speed * distance/length
 	return desired - velocity
 	
 	
@@ -75,6 +80,7 @@ func _physics_process(delta):
 		look_at(global_position - look_dir, effective_up)
 		# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
+		velocity -= velocity * damping * delta
 	
 	move_and_slide()
 	draw_gizmos()

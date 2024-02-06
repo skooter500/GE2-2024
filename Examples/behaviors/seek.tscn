@@ -1,5 +1,6 @@
-[gd_scene load_steps=12 format=3 uid="uid://doxnhvhjq4su4"]
+[gd_scene load_steps=13 format=3 uid="uid://doxnhvhjq4su4"]
 
+[ext_resource type="Script" path="res://behaviors/root.gd" id="1_5x1jo"]
 [ext_resource type="Script" path="res://behaviors/BigBoid.gd" id="1_v3sjo"]
 [ext_resource type="Material" uid="uid://riaxsucfeykv" path="res://behaviors/boid_material.tres" id="2_6po8y"]
 [ext_resource type="Script" path="res://behaviors/MoveMe.gd" id="3_fk53t"]
@@ -38,6 +39,7 @@ _data = {
 point_count = 6
 
 [node name="root" type="Node3D"]
+script = ExtResource("1_5x1jo")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
