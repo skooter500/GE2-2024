@@ -1,10 +1,25 @@
-[gd_scene load_steps=9 format=3 uid="uid://doxnhvhjq4su4"]
+[gd_scene load_steps=12 format=3 uid="uid://doxnhvhjq4su4"]
 
 [ext_resource type="Script" path="res://behaviors/BigBoid.gd" id="1_v3sjo"]
 [ext_resource type="Material" uid="uid://riaxsucfeykv" path="res://behaviors/boid_material.tres" id="2_6po8y"]
 [ext_resource type="Script" path="res://behaviors/MoveMe.gd" id="3_fk53t"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_6q73x"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_my05m"]
+emission_shape_offset = Vector3(0, -0.5, 0)
+emission_shape_scale = Vector3(0, 0, 0)
+direction = Vector3(0, 0, 0)
+spread = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hovgs"]
+albedo_color = Color(1, 0.113725, 1, 1)
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_6hgjr"]
+material = SubResource("StandardMaterial3D_hovgs")
+shape = 0
+size = 0.2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_752ur"]
 
@@ -38,6 +53,14 @@ transform = Transform3D(0.25, 0, 0, 0, -2.18557e-08, -0.25, 0, 0.5, -1.09278e-08
 mesh = SubResource("PrismMesh_6q73x")
 skeleton = NodePath("../..")
 surface_material_override/0 = ExtResource("2_6po8y")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="boid/MeshInstance3D"]
+sub_emitter = NodePath(".")
+speed_scale = 10.0
+trail_enabled = true
+trail_lifetime = 1.91
+process_material = SubResource("ParticleProcessMaterial_my05m")
+draw_pass_1 = SubResource("RibbonTrailMesh_6hgjr")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="boid"]
 shape = SubResource("BoxShape3D_752ur")
