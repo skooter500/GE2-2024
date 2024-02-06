@@ -47,7 +47,7 @@ transform = Transform3D(0.580348, -0.712167, 0.394988, 0, 0.485023, 0.874501, -0
 environment = SubResource("Environment_mhj6t")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 2.0
 autostart = true
 
 [connection signal="timeout" from="Timer" to="Marker3D" method="_on_timer_timeout"]
