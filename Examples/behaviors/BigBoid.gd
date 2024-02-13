@@ -27,7 +27,7 @@ extends CharacterBody3D
 
 @export var offset_pursue_enabled:bool=false
 @export var leader_target_path:NodePath
-@onready var leader_target:Node3D=get_node(pursue_target_path)
+@onready var leader_target:Node3D=get_node(leader_target_path)
 
 var offset:Vector3
 
@@ -59,11 +59,13 @@ func _ready():
 	
 	if offset_pursue_enabled:
 		offset = global_position - leader_target.global_position
-		
+		offset = offset * leader_target.global_transform.basis
 	
 func arrive(target_pos:Vector3, slowing:float):
 	var to_target = target_pos - global_position
 	var dist = to_target.length()
+	if dist == 0:
+		return Vector3.ZERO
 	var ramped = (dist / slowing) * max_speed
 	var clamped = min(ramped, max_speed) 
 	var desired = (to_target * clamped) / dist
@@ -74,8 +76,8 @@ func offset_pursue(leader:BigBoid):
 	var to_target = global_target - global_position
 	var dist = to_target.length()
 	var t = dist / max_speed
-	
-	var projected = leader.global_position + leader.velocity * t
+	DebugDraw3D.draw_sphere(global_target, 0.1, Color.CHARTREUSE)
+	var projected = global_target + leader.velocity * t
 	
 	return arrive(projected, 10)
 	

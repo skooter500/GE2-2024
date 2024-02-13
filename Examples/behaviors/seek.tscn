@@ -1,10 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://doxnhvhjq4su4"]
+[gd_scene load_steps=12 format=3 uid="uid://doxnhvhjq4su4"]
 
 [ext_resource type="Script" path="res://behaviors/root.gd" id="1_tugak"]
 [ext_resource type="Script" path="res://behaviors/BigBoid.gd" id="1_v3sjo"]
 [ext_resource type="Material" uid="uid://w1qh7uc0q4l6" path="res://behaviors/boid_material.tres" id="2_6po8y"]
 [ext_resource type="Script" path="res://behaviors/MoveMe.gd" id="3_fk53t"]
-[ext_resource type="Script" path="res://behaviors/SpineAnimator.gd" id="4_fhisk"]
 [ext_resource type="Script" path="res://behaviors/PathDrawer.gd" id="6_1gx1c"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_6q73x"]
@@ -23,20 +22,17 @@ _data = {
 }
 point_count = 4
 
-[sub_resource type="BoxMesh" id="BoxMesh_knd2o"]
-
 [sub_resource type="BoxMesh" id="BoxMesh_u6xwl"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_5ns1m"]
-
-[sub_resource type="SphereMesh" id="SphereMesh_i5vs6"]
 
 [node name="root" type="Node3D"]
 script = ExtResource("1_tugak")
 
 [node name="boid3" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.815, 0, 5.74011)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -15.5367, 0, 4.66091)
 script = ExtResource("1_v3sjo")
+max_speed = 1.0
 target_node_path = NodePath("../Marker3D")
 seek_enabled = false
 looped = false
@@ -52,16 +48,13 @@ surface_material_override/0 = ExtResource("2_6po8y")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="boid3"]
 shape = SubResource("BoxShape3D_752ur")
 
-[node name="SpineAnimator" type="Node" parent="boid3"]
-script = ExtResource("4_fhisk")
-bonePaths = [NodePath("../../boid3"), NodePath("../MeshInstance3D"), NodePath("../../MeshInstance3D2")]
-
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.7547, 24.6856, 6.13743)
 
 [node name="boid" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.3723, 0, 5.9356)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -18.7061, 0, 5.51591)
 script = ExtResource("1_v3sjo")
+max_speed = 1.0
 target_node_path = NodePath("../Marker3D")
 seek_enabled = false
 looped = false
@@ -78,16 +71,9 @@ surface_material_override/0 = ExtResource("2_6po8y")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="boid"]
 shape = SubResource("BoxShape3D_752ur")
 
-[node name="SpineAnimator" type="Node" parent="boid"]
-script = ExtResource("4_fhisk")
-bonePaths = [NodePath(".."), NodePath("../../MeshInstance3D"), NodePath("../../MeshInstance3D2")]
-
 [node name="Marker3D" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.06085, 0, 4.15806)
 script = ExtResource("3_fk53t")
-
-[node name="CSGSphere3D" type="CSGSphere3D" parent="Marker3D"]
-material = ExtResource("2_6po8y")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.580348, -0.712167, 0.394988, 0, 0.485023, 0.874501, -0.814369, -0.507515, 0.281482, 0, 4.35052, 0)
@@ -103,16 +89,6 @@ autostart = true
 transform = Transform3D(0.769098, 0, -0.63913, 0, 1, 0, 0.63913, 0, 0.769098, 0, 0, -13.8321)
 curve = SubResource("Curve3D_ybie1")
 script = ExtResource("6_1gx1c")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.83333)
-mesh = SubResource("BoxMesh_knd2o")
-surface_material_override/0 = ExtResource("2_6po8y")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.22902)
-mesh = SubResource("BoxMesh_knd2o")
-surface_material_override/0 = ExtResource("2_6po8y")
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -130,23 +106,10 @@ tracker = &"right_hand"
 [node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/XRController3D2"]
 mesh = SubResource("BoxMesh_5ns1m")
 
-[node name="enemy" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.82242, 0, 6.51869)
-script = ExtResource("1_v3sjo")
-target_node_path = NodePath("../boid")
-seek_enabled = false
-looped = false
-pursue_target_path = NodePath("../boid")
-offset_pursue_enabled = true
-leader_target_path = NodePath("../leader")
-
-[node name="enemy" type="MeshInstance3D" parent="enemy"]
-mesh = SubResource("SphereMesh_i5vs6")
-skeleton = NodePath("../..")
-
 [node name="leader" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.614, 0, 13.0025)
+transform = Transform3D(0.0042935, 0, 0.999991, 0, 1, 0, -0.999991, 0, 0.0042935, -9.53705, 0, 6.34747)
 script = ExtResource("1_v3sjo")
+max_speed = 1.0
 target_node_path = NodePath("../Marker3D")
 seek_enabled = false
 follow_path = true
@@ -160,9 +123,5 @@ surface_material_override/0 = ExtResource("2_6po8y")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="leader"]
 shape = SubResource("BoxShape3D_752ur")
-
-[node name="SpineAnimator" type="Node" parent="leader"]
-script = ExtResource("4_fhisk")
-bonePaths = [NodePath(".."), NodePath("../../MeshInstance3D"), NodePath("../../MeshInstance3D2")]
 
 [connection signal="timeout" from="Timer" to="Marker3D" method="_on_timer_timeout"]
