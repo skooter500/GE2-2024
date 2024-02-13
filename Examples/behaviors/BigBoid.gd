@@ -78,7 +78,8 @@ func offset_pursue(leader:BigBoid):
 	var t = dist / max_speed
 	DebugDraw3D.draw_sphere(global_target, 0.1, Color.CHARTREUSE)
 	var projected = global_target + leader.velocity * t
-	
+	DebugDraw3D.draw_sphere(projected, 0.1, Color.RED)
+
 	return arrive(projected, 10)
 	
 func pursue(target_boid:BigBoid):
