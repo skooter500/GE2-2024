@@ -12,7 +12,7 @@ extends CharacterBody3D
 var target:Node3D
 
 @export var damping:float = 0.1
-@export var banking:float = 0.1
+@export var banking:float = 1
 
 @export var seek_enabled:bool=true
 @export var arrive_enabled:bool=false
@@ -25,8 +25,8 @@ var target:Node3D
 var display_bank_force:Vector3
 var display_look_dir:Vector3
 @export var look_dir:Vector3
+@export var player_power:float = 5
 
-var damping:float = 0.1
 
 func draw_gizmos():
 	#Red, force
@@ -74,40 +74,52 @@ func derived_look(up:Vector3, vel:Vector3):
 	return forward
 
 func player():
-	return Vector3.ZERO
-	pass	
+	var userInForward = Input.get_axis("Back", "Forward") # Input.get_vector("Left", "Right", "Back", "Forward")
+	var userInRight = Input.get_axis("Right", "Left")
+	
+	var forwardForce = global_basis.z
+	forwardForce.y = 0
+	forwardForce = forwardForce.normalized()
+	forwardForce *= userInForward
+	
+	var rightForce = global_basis.x
+	rightForce.y = 0
+	rightForce = rightForce.normalized()
+	rightForce *= userInRight
+	return (forwardForce + rightForce) * player_power
+	
 func calculate():
-	var force = Vector3.ZERO
+	var forceAcc = Vector3.ZERO
 	
 	if seek_enabled:
-		force += seek(target.global_position)
+		forceAcc += seek(target.global_position)
 	if arrive_enabled:
-		force += arrive(target.global_position, slowing_distance)
+		forceAcc += arrive(target.global_position, slowing_distance)
 	if player_enabled:
-		force += player()
-	return force
+		forceAcc += player()
+	return forceAcc
 
 func _physics_process(delta):
-	path.progress+=target_speed
-	force = arrive(target.global_position, slowing_distance)
+	#path.progress+=target_speed
+	# force = arrive(target.global_position, slowing_distance)
 	
 	force = calculate()
 	acceleration = force / mass
 	
 	velocity = velocity + acceleration * delta * acceleration_scale
 	
+	velocity -= velocity * delta * damping
 	effective_up = bank(force)
 	look_dir = derived_look(effective_up, velocity)
 	if velocity.length() > 0:
-		#look_at(global_position - look_dir, effective_up)
 		# look_at(position - velocity)
 		# apply damping
-		velocity -= velocity * delta * damping
 					# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
 
-		var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), delta * 5.0)
-		look_at(global_transform.origin - velocity.normalized(), temp_up)
+		#var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), 1) #delta * 5.0)
+		#look_at(global_transform.origin - velocity.normalized(), temp_up)
+		look_at(global_position - look_dir, effective_up)
 	
 	move_and_slide()
 	draw_gizmos()
