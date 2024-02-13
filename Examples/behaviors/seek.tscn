@@ -34,15 +34,39 @@ point_count = 4
 [node name="root" type="Node3D"]
 script = ExtResource("1_tugak")
 
+[node name="boid3" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.815, 0, 5.74011)
+script = ExtResource("1_v3sjo")
+target_node_path = NodePath("../Marker3D")
+seek_enabled = false
+looped = false
+offset_pursue_enabled = true
+leader_target_path = NodePath("../leader")
+power = 10.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="boid3"]
+transform = Transform3D(1, 0, 0, 0, -8.74228e-08, -1, 0, 2, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_6q73x")
+surface_material_override/0 = ExtResource("2_6po8y")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="boid3"]
+shape = SubResource("BoxShape3D_752ur")
+
+[node name="SpineAnimator" type="Node" parent="boid3"]
+script = ExtResource("4_fhisk")
+bonePaths = [NodePath("../../boid3"), NodePath("../MeshInstance3D"), NodePath("../../MeshInstance3D2")]
+
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.7547, 24.6856, 6.13743)
 
 [node name="boid" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.3723, 0, 5.9356)
 script = ExtResource("1_v3sjo")
 target_node_path = NodePath("../Marker3D")
 seek_enabled = false
-follow_path = true
-flee_enabled = true
+looped = false
+offset_pursue_enabled = true
+leader_target_path = NodePath("../leader")
 power = 10.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="boid"]
@@ -107,13 +131,38 @@ tracker = &"right_hand"
 mesh = SubResource("BoxMesh_5ns1m")
 
 [node name="enemy" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.82242, 0, 6.51869)
 script = ExtResource("1_v3sjo")
-max_speed = 20.0
 target_node_path = NodePath("../boid")
+seek_enabled = false
 looped = false
+pursue_target_path = NodePath("../boid")
+offset_pursue_enabled = true
+leader_target_path = NodePath("../leader")
 
 [node name="enemy" type="MeshInstance3D" parent="enemy"]
 mesh = SubResource("SphereMesh_i5vs6")
 skeleton = NodePath("../..")
+
+[node name="leader" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.614, 0, 13.0025)
+script = ExtResource("1_v3sjo")
+target_node_path = NodePath("../Marker3D")
+seek_enabled = false
+follow_path = true
+power = 10.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="leader"]
+transform = Transform3D(1, 0, 0, 0, -8.74228e-08, -1, 0, 2, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_6q73x")
+skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("2_6po8y")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="leader"]
+shape = SubResource("BoxShape3D_752ur")
+
+[node name="SpineAnimator" type="Node" parent="leader"]
+script = ExtResource("4_fhisk")
+bonePaths = [NodePath(".."), NodePath("../../MeshInstance3D"), NodePath("../../MeshInstance3D2")]
 
 [connection signal="timeout" from="Timer" to="Marker3D" method="_on_timer_timeout"]
