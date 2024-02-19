@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://behaviors/root.gd" id="1_tugak"]
 [ext_resource type="Script" path="res://behaviors/BigBoid.gd" id="1_v3sjo"]
-[ext_resource type="Material" uid="uid://w1qh7uc0q4l6" path="res://behaviors/boid_material.tres" id="2_6po8y"]
+[ext_resource type="Material" uid="uid://riaxsucfeykv" path="res://behaviors/boid_material.tres" id="2_6po8y"]
 [ext_resource type="Script" path="res://behaviors/MoveMe.gd" id="3_fk53t"]
 [ext_resource type="Script" path="res://behaviors/PathDrawer.gd" id="6_1gx1c"]
 
