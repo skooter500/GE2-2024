@@ -1,19 +1,16 @@
 class_name BigBoid
 extends CharacterBody3D
 
-@export var max_speed:float = 5
+@export var max_speed:float = 10
 @export var force:Vector3
 @export var acceleration:Vector3
 @export var target_node_path:NodePath
-@export var path:PathFollow3D
+
 @export var mass:float = 1
-@export var slowing_distance:float = 1
-@export var target_speed:float = 0.05
-@export var acceleration_scale:float = 1
-var target:Node3D
+@export var slowing_distance = 5
 
 @export var damping:float = 0.1
-@export var banking:float = 1
+@export var banking:float = 0.1
 
 @export var seek_enabled:bool=true
 @export var arrive_enabled:bool=false
@@ -50,47 +47,28 @@ func follow():
 			current = (current + 1) % len
 	return seek(target)
 
-#for banking, we need to calculate an 'effective up' using restitution of force
-@export var grav_direction:Vector3 = Vector3(0,-1,0)
-@export var grav_scale:float = 3
-@export var effective_up:Vector3
-var display_bank_force:Vector3
-var display_look_dir:Vector3
-@export var look_dir:Vector3
-@export var player_power:float = 5
-
-
 func draw_gizmos():
-	#Red, force
 	DebugDraw3D.draw_arrow(global_position, global_position + force, Color.RED, 0.1)
-	#Yellow, velocity
 	DebugDraw3D.draw_arrow(global_position, global_position + velocity, Color.YELLOW, 0.1)
-	#Blue Violet (purps), arrive sphere
-	DebugDraw3D.draw_sphere(target.global_position, slowing_distance, Color.CADET_BLUE)
-	#green, effective down
-	DebugDraw3D.draw_arrow(global_position, global_position + display_bank_force, Color.GREEN, 0.1)
-	#orange look dir
-	DebugDraw3D.draw_arrow(global_position, global_position + display_look_dir, Color.ORANGE, 0.1)
 
+	# DebugDraw3D.draw_sphere(target.global_position, slowing_distance, Color.BLUE_VIOLET)
+
+var target:Node3D
 func _ready():
 	target = get_node(target_node_path)	
-	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING #floating
-	if offset_pursue_enabled:
-		offset = global_position - leader_target.global_position
-		offset = offset * leader_target.global_transform.basis
 	
-	
-func arrive(target_pos:Vector3, slowing:float): 
-	var distance = target_pos - global_position
-	
-	var length = distance.length() #calcing length once rather than twice
-	
-	if length == 0:
+	#if offset_pursue_enabled:
+		#offset = global_position - leader_target.global_position
+		#offset = offset * leader_target.global_transform.basis
+	#
+func arrive(target_pos:Vector3, slowing:float):
+	var to_target = target_pos - global_position
+	var dist = to_target.length()
+	if dist == 0:
 		return Vector3.ZERO
-	
-	var ramped_speed = max_speed*(length/slowing)
-	var clipped_speed = min(ramped_speed, max_speed)
-	var desired = clipped_speed * distance/length
+	var ramped = (dist / slowing) * max_speed
+	var clamped = min(ramped, max_speed) 
+	var desired = (to_target * clamped) / dist
 	return desired - velocity
 	
 func offset_pursue(leader:BigBoid):
@@ -132,74 +110,58 @@ func seek(target_pos:Vector3):
 	var desired = to_target.normalized() * max_speed
 	return desired - velocity
 	
-
-func bank(turn_force:Vector3):
-	var restitution = -grav_direction * grav_scale # typical "up"
-	var derived_up = restitution + turn_force
-	display_bank_force = derived_up
-	return derived_up.normalized()
-
-func derived_look(up:Vector3, vel:Vector3):
-	var right = vel.cross(up)
-	var forward = up.cross(right)
-	display_look_dir = forward
-	return forward
-
+@export var power:float = 100
+	
 func player():
-	var userInForward = Input.get_axis("Back", "Forward") # Input.get_vector("Left", "Right", "Back", "Forward")
-	var userInRight = Input.get_axis("Right", "Left")
+	var force = Vector3.ZERO
+	var f = Input.get_axis("back", "forward")
 	
-	var forwardForce = global_basis.z
-	forwardForce.y = 0
-	forwardForce = forwardForce.normalized()
-	forwardForce *= userInForward
+	force = f * power * global_basis.z
 	
-	var rightForce = global_basis.x
-	rightForce.y = 0
-	rightForce = rightForce.normalized()
-	rightForce *= userInRight
-	return (forwardForce + rightForce) * player_power
+	var s = Input.get_axis("left", "right")
 	
+	var projected = global_basis.x
+	projected.y = 0
+	projected = projected.normalized()
+	
+	force += s * power * projected
+	
+	return force
+	pass	
 func calculate():
-	var forceAcc = Vector3.ZERO
+	var force = Vector3.ZERO
 	
 	if seek_enabled:
-		forceAcc += seek(target.global_position)
+		force += seek(target.global_position)
 	if arrive_enabled:
-		forceAcc += arrive(target.global_position, slowing_distance)
+		force += arrive(target.global_position, slowing_distance)
 	if player_enabled:
-		forceAcc += player()
+		force += player()
 	if follow_path:
-		forceAcc += follow()
+		force += follow()
 	if flee_enabled:
-		forceAcc += flee(flee_target.global_transform, 5)
+		force += flee(flee_target.global_transform, 5)
 	if pursue_enabled:
-		forceAcc += pursue(pursue_target)
+		force += pursue(pursue_target)
 	if offset_pursue_enabled:
-		forceAcc += offset_pursue(leader_target)
-	return forceAcc
+		force += offset_pursue(leader_target)
+	return force
 	
 func _physics_process(delta):
-	#path.progress+=target_speed
-	# force = arrive(target.global_position, slowing_distance)
 	
 	force = calculate()
 	acceleration = force / mass
 	
-	velocity = velocity + acceleration * delta * acceleration_scale
-	
-	velocity -= velocity * delta * damping
-	effective_up = bank(force)
-	look_dir = derived_look(effective_up, velocity)
+	velocity = velocity + acceleration * delta
 	if velocity.length() > 0:
 		# look_at(position - velocity)
 		# apply damping
+		velocity -= velocity * delta * damping
 					# global_transform.basis.z  = velocity.normalized()
 		# global_transform = global_transform.orthonormalized()
 
-		#var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), 1) #delta * 5.0)
-		#look_at(global_transform.origin - velocity.normalized(), temp_up)
-		look_at(global_position - look_dir, effective_up)
+		var temp_up = global_transform.basis.y.lerp(Vector3.UP + (acceleration * banking), delta * 5.0)
+		look_at(global_transform.origin - velocity.normalized(), temp_up)
 	
 	move_and_slide()
 	draw_gizmos()
