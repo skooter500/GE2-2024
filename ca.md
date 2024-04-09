@@ -5,7 +5,7 @@
 
 Your task is to observe and record birds, insects, nematodes or any living creatures, and simulate what you observe, artistly  or realistically using a game engine. You can fork [this repository](https://github.com/skooter500/miniature-rotary-phone) and use the examples for steering behaviors and state machines in your project.
 
-## Deliverables
+## Deliverables     
 
 Photographs/videos of your primary research. Go into nature, find something interesting and photograph/video it. You can store your research in a photo gallery and link to it from your git repo.
 
