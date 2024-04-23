@@ -33,9 +33,6 @@
 - https://github.com/skooter500/GE2-LabTest2-2017
 - https://github.com/skooter500/GAILabTest12017
 	
-## Assessment Schedule	
-- Lab test 25 April - 2 hours
-- Assignment - 2 May - In person demos 
 
 ## Week 8 - Flocking
 - [Recording](https://tudublin-my.sharepoint.com/:v:/g/personal/bryan_duggan_tudublin_ie/EcJH2B296chGjAKHMQiey9EBHAQNHIaDRKRsvL_udNvZAw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=5i6DE9)
